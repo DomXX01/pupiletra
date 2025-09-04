@@ -103,8 +103,8 @@
     // Palabras
     const words = [
       "LIAM","HARRY","ZAYN","LOUIS","NIALL","GATOS","WILLUMP","NUNU","JAUJA",
-      "NALA","RODO","COCO","GRETA","BOBIS","ESTERNOCLIDOMASTOIDEO",
-      "NEGRO","BLANCO","ARQUITECTURA","MAKIS","PIZZA","MALECON","BESOS","HELADO","GUINO"
+      "NALA","RODO","COCO","GRETA","BOBIS",
+      "NEGRO","BLANCO","ARQUITECTURA","MAKIS","PIZZA","MALECON","BESOS","HELADO"
     ];
     const size = 20;
     let movimientos = 0;
@@ -115,8 +115,8 @@
 
     function placeWord(word) {
       word = word.toUpperCase();
-      let placed = false, tries = 0;
-      while (!placed && tries < 500) { // límite para evitar bucle infinito
+      let placed = false;
+      while (!placed) {
         const dir = directions[Math.floor(Math.random() * directions.length)];
         const row = Math.floor(Math.random() * size);
         const col = Math.floor(Math.random() * size);
@@ -135,7 +135,6 @@
           }
           placed=true;
         }
-        tries++;
       }
     }
 
