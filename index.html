@@ -2,44 +2,50 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Pupiletras de Amor 🐱</title>
+  <title>Prueba Pupiletras</title>
   <style>
-    body {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      text-align: center;
-      background: linear-gradient(135deg, #ffe6f0, #e6f7ff, #e6ffe6);
-    }
-    h1 { color: #444; }
     #wordsearch {
       display: grid;
-      grid-template-columns: repeat(15, 30px);
-      grid-template-rows: repeat(15, 30px);
-      gap: 2px;
-      justify-content: center;
+      grid-template-columns: repeat(5, 40px);
+      gap: 5px;
       margin: 20px auto;
+      justify-content: center;
     }
     .cell {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #000;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #ccc;
-      background: #fff;
-      cursor: pointer;
-      user-select: none;
+      font-size: 18px;
       font-weight: bold;
-      font-size: 14px;
-      border-radius: 4px;
     }
-    .cell.selected { background: #ffd6e0; }
-    .cell.found { background: #c3f0ca; }
-    #wordlist { margin-top: 20px; padding: 0; }
-    #wordlist li {
-      list-style: none;
-      font-size: 16px;
-      margin: 2px;
-    }
-    #wordlist li.found {
-      text-decoration: line-through;
-      color: #666;
-    }
-    #contador {
+  </style>
+</head>
+<body>
+  <h1>Mini Pupiletras</h1>
+  <div id="wordsearch"></div>
+
+  <script>
+    const grid = [
+      ["C","A","S","A","S"],
+      ["G","A","T","O","S"],
+      ["P","E","R","R","O"],
+      ["L","U","Z","E","S"],
+      ["A","M","O","R","S"]
+    ];
+
+    const wordsearch = document.getElementById("wordsearch");
+
+    grid.forEach(row => {
+      row.forEach(letter => {
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        div.textContent = letter;
+        wordsearch.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
