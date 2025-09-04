@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Pupiletras de Amor 🐱</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      background: url('gatitos-fondo.png') repeat;
+      background-size: 200px;
+    }
+    h1 {
+      color: #444;
+    }
+    #wordsearch {
+      display: grid;
+      grid-template-columns: repeat(20, 30px);
+      grid-template-rows: repeat(20, 30px);
+      gap: 2px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+    .cell.selected {
+      background: #ffd6e0; /* pastel rosado */
+    }
+    .cell.found {
+      background: #c3f0ca; /* pastel verde */
+    }
+    #wordlist {
+      margin-top: 20px;
+      padding: 0;
+    }
+    #wordlist li {
+      list-style: none;
+      font-size: 18px;
+      margin: 4px;
+    }
+    #wordlist li.found {
+      text-decoration: line-through;
+      color: #888;
+    }
+    #contador {
+      margin: 15px;
+      font-size: 18px;
+      background: #ffe;
+      padding: 8px 15px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    #mensajeFinal {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #444;
+      display: none;
+    }
+    #mensajeFinal img {
+      margin-top: 15px;
+      max-width: 250px;
+      border-radius: 15px;
+      box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #ffe0f0;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pupiletras de Amor 🐾</h1>
+  <div id="contador">Movimientos: 0</div>
+  <div id="wordsearch"></div>
+  <h3>Palabras a encontrar:</h3>
+  <ul id="wordlist"></ul>
+  <button onclick="imprimirSolucion()">Imprimir solución</button>
+  <div id="mensajeFinal">
+    <p>¡Muy bien amorcito!🥳 Pero igual sigue siendo bobis jijijij ❤</p>
+    <img id="fotoAmor" src="foto.jpg" alt="Foto especial">
+  </div>
+
+  <script>
+    // Palabras
+    const words = [
+      "LIAM","HARRY","ZAYN","LOUIS","NIALL","GATOS","WILLUMP","NUNU","JAUJA",
+      "NALA","RODO","COCO","GRETA","BOBIS","ESTERNOCLIEDOMASTOIDEO",
+      "NEGRO","BLANCO","ARQUITECTURA","MAKIS","PIZZA","MALECON","BESOS","HELADO","GUIÑO"
+    ];
+    const size = 20;
+    let movimientos = 0;
+    const grid = Array.from({ length: size }, () => Array(size).fill(''));
+    const directions = [
+      [0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]
+    ];
+
+    function placeWord(word) {
+      word = word.toUpperCase();
+      let placed = false;
+      while (!placed) {
+        const dir = directions[Math.floor(Math.random() * directions.length)];
+        const row = Math.floor(Math.random() * size);
+        const col = Math.floor(Math.random() * size);
+        let r=row, c=col, fits=true;
+        for (let i=0;i<word.length;i++){
+          if (r<0||c<0||r>=size||c>=size||(grid[r][c]&&grid[r][c]!==word[i])) {
+            fits=false; break;
+          }
+          r+=dir[0]; c+=dir[1];
+        }
+        if (fits) {
+          r=row; c=col;
+          for (let i=0;i<word.length;i++) {
+            grid[r][c]=word[i];
+            r+=dir[0]; c+=dir[1];
+          }
+          placed=true;
+        }
+      }
+    }
+
+    // Colocar palabras
+    words.forEach(w=>placeWord(w));
+
+    // Rellenar espacios
+    for (let r=0;r<size;r++){
+      for (let c=0;c<size;c++){
+        if (!grid[r][c]) grid[r][c]=String.fromCharCode(65+Math.floor(Math.random()*26));
+      }
+    }
+
+    // Renderizar tablero
+    const wordsearch=document.getElementById("wordsearch");
+    grid.forEach((row,r)=>{
+      row.forEach((letter,c)=>{
+        const div=document.createElement("div");
+        div.classList.add("cell");
+        div.dataset.row=r;
+        div.dataset.col=c;
+        div.textContent=letter;
+        wordsearch.appendChild(div);
+      });
+    });
+
+    // Lista palabras
+    const wordlist=document.getElementById("wordlist");
+    words.forEach(w=>{
+      const li=document.createElement("li");
+      li.textContent=w;
+      li.id="word-"+w;
+      wordlist.appendChild(li);
+    });
+
+    // Interacción
+    let firstCell=null;
+    wordsearch.addEventListener("click",e=>{
+      if (!e.target.classList.contains("cell")) return;
+      if (!firstCell) {
+        firstCell=e.target;
+        firstCell.classList.add("selected");
+      } else {
+        movimientos++;
+        document.getElementById("contador").textContent="Movimientos: "+movimientos;
+        const secondCell=e.target;
+        const r1=parseInt(firstCell.dataset.row),c1=parseInt(firstCell.dataset.col);
+        const r2=parseInt(secondCell.dataset.row),c2=parseInt(secondCell.dataset.col);
+        let word="", dr=Math.sign(r2-r1), dc=Math.sign(c2-c1), r=r1, c=c1;
+        while (true){
+          const cell=document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+          word+=grid[r][c];
+          if (cell) cell.classList.add("selected");
+          if (r===r2&&c===c2) break;
+          r+=dr; c+=dc;
+        }
+        if (words.includes(word)){
+          document.getElementById("word-"+word).classList.add("found");
+          document.querySelectorAll(".cell.selected").forEach(el=>{
+            el.classList.remove("selected"); el.classList.add("found");
+          });
+        } else {
+          document.querySelectorAll(".cell.selected").forEach(el=>el.classList.remove("selected"));
+        }
+        firstCell=null;
+
+        // Verificar si se completaron todas
+        if ([...document.querySelectorAll("#wordlist li")].every(li=>li.classList.contains("found"))){
+          document.getElementById("mensajeFinal").style.display="block";
+        }
+      }
+    });
+
+    function imprimirSolucion(){
+      window.print();
+    }
+  </script>
+</body>
+</html>
